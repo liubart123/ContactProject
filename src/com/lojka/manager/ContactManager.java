@@ -9,14 +9,14 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 
 //JDBC
-/*import com.lojka.connector.ConnectorDB;
+import com.lojka.connector.ConnectorDB;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Optional;*/
+import java.util.Optional;
 
 public class ContactManager {
     private ArrayList<Person> contactCollection = new ArrayList<Person>();
@@ -164,17 +164,24 @@ public class ContactManager {
     }
 
     //TODO: code for JDBC. Will be added in next task
-/*    private Connection connection;
-    private final static String SQL_GET_USERINFO_BY_ID = "select * from users where id=? ";
-    public ContactManager() throws SQLException {
+    private Connection connection;
+    private final static String SQL_GET_USERINFO_BY_ID = "select * from persons where idPerson=? ";
+    public ContactManager(){
+        log.trace("connection is opening...");
         try{
             this.connection = ConnectorDB.getConnection();
+            log.trace("connection was opened successfully");
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
-    public void closeConnection() throws SQLException {
-        connection.close();
+    public void closeConnection(){
+        log.trace("connection is closing...");
+        try{
+            connection.close();
+        } catch (Exception e){
+            log.error(e.getMessage());
+        }
     }
     public String getUserInfobyId(final long id) {
         PreparedStatement ps = null;
@@ -185,13 +192,13 @@ public class ContactManager {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
 
-                return rs.getString("login");
+                return rs.getString("name");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-    }*/
+    }
 
 
 }

@@ -9,20 +9,20 @@ import java.util.ArrayList;
 public class Application {
 
     public static void main(String[] args) {
-        /*TODO: code for JDBC
         try{
             ContactManager c = new ContactManager();
-            System.out.println(c.getUserInfobyId(1));
+//            System.out.println(c.getUserInfobyId(1));
         }catch (Exception e){
             System.out.println((e.getMessage()));
         }
-        */
         ContactManager manager = new ContactManager();
+        System.out.println(manager.getUserInfobyId(2));
+        manager.closeConnection();
 
-        //getting collection from file
+        /*//getting collection from file
         manager.deserializeCollection();
         //printing collection
-        manager.printAllContacts();
+        manager.printAllContacts();*/
 
         //creating some contacts
         //ivan
@@ -87,7 +87,8 @@ public class Application {
         manager.addContact(p);
         manager.serializeCollection();*/
 
-        //finding contacts
+
+        /*//finding contacts
         manager.findInCollection("belarusian", CriterionForSerach.nationality, true);
         //finding and removing contact
         ArrayList<Person> foundPersons = manager.findInCollection("ivan", CriterionForSerach.name, false);
@@ -99,7 +100,7 @@ public class Application {
             manager.addContact(person);
             manager.printAllContacts();
         }
-
+*/
     }
 
 }
