@@ -3,8 +3,7 @@ package com.lojka.manager;
 import com.lojka.contact.Person;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -15,12 +14,47 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Optional;
 
 public class ContactManager {
     private ArrayList<Person> contactCollection = new ArrayList<Person>();
     private static final Logger log = Logger.getLogger(ContactManager.class);
+    private Connection connection;
+    //pattern for getting person by attribute
+    //TODO: delete this string lol
+    //private final static String SQL_GET_USER = "select * from persons where ?=? ";
+
+    //collection for query by attribute
+    private static HashMap<CriterionForSerach, String> SQL_TABLE_ATTRIBUTES;
+    static {
+        SQL_TABLE_ATTRIBUTES=new HashMap<CriterionForSerach, String>();
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.name, "select * from persons where name=? ");
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.lastName, "select * from persons where lastName=? ");
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.patronymic, "select * from persons where patronymic=? ");
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.nationality, "select * from persons where nationality=? ");
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.email, "select * from persons where email=? ");
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.website, "select * from persons where website=? ");
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.job, "select * from persons where job=? ");
+        SQL_TABLE_ATTRIBUTES.put(CriterionForSerach.comment, "select * from persons where comment=? ");
+    }
+
+    public ContactManager(){
+        log.trace("connection is opening...");
+        try{
+            this.connection = ConnectorDB.getConnection();
+            log.trace("connection was opened successfully");
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+    }
+    //connection to db
+    public void closeConnection(){
+        log.trace("connection is closing...");
+        try{
+            connection.close();
+        } catch (Exception e){
+            log.error(e.getMessage());
+        }
+    }
 
     public boolean addContact(Person p){
         log.trace("adding new contact...");
@@ -80,110 +114,23 @@ public class ContactManager {
     }
 
     //find contacts with part of their information
-    public ArrayList<Person> findInCollection(String searchWord, CriterionForSerach criterion, boolean printResults){
-        if (searchWord == null || criterion == null){
-            log.trace("seraching with null parametr");
-            return null;
-        }
-        log.trace(String.format("seraching with word \"%s\" was started...", searchWord));
-        ArrayList<String> stringsForSearching = new ArrayList<>();  //strings, were necessary word will be searched
-        switch (criterion){
-            case name:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getName());
-                }
-                break;
-            case lastName:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getLastName());
-                }
-                break;
-            case patronymic:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getPatronymic());
-                }
-                break;
-            case nationality:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getNationality());
-                }
-                break;
-            case website:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getWebsite());
-                }
-                break;
-            case email:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getEmail());
-                }
-                break;
-            case job:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getJob());
-                }
-                break;
-            case comment:
-                for (Person p : contactCollection){
-                    stringsForSearching.add(p.getComment());
-                }
-                break;
-        }
-        ArrayList<Integer> listOfIndexes = getIndexesOfSubStringInStrings(searchWord,stringsForSearching);
-        if (listOfIndexes.size()==0){
-            log.error("Collection probably was empty");
-            return null;
-        } else {
-            log.info("seraching was successful\n");
-        }
-        ArrayList<Person> result = new ArrayList<Person>();
-        //TODO: code for printing persons can be moved in other place
-        String stringResult = "";
-        int iter = 0;
-        for (Integer index : listOfIndexes){
-            stringResult += "\n" + (iter + 1) + ") " + contactCollection.get(index);
-            result.add(contactCollection.get(index));
-            iter++;
-        }
-        if (printResults){
-            log.info("found contacts:\n" + stringResult);
-        }
-        return result;
-    }
-    //find strings, that are substrings for strings in collection
-    private ArrayList<Integer> getIndexesOfSubStringInStrings(String word, Collection<String> collection){
-        ArrayList<Integer> res = new ArrayList<Integer>();
-        int iter = 0;
-        for (String el : collection){
-            if (el != null && el.indexOf(word) != -1) {
-                res.add(iter);
+    public ArrayList<Person> findInCollection(String searchWord, CriterionForSerach criterion){
+        PreparedStatement ps = null;
+        ArrayList<Person> resultArray = new ArrayList<>();
+        try {
+            ps = connection.prepareStatement(SQL_TABLE_ATTRIBUTES.get(criterion));
+            ps.setString(1, String.valueOf(searchWord));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                log.info(rs.getString(3));
             }
-            iter++;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return res;
+        return resultArray;
     }
 
-    //TODO: code for JDBC. Will be added in next task
-    private Connection connection;
-    private final static String SQL_GET_USERINFO_BY_ID = "select * from persons where idPerson=? ";
-    public ContactManager(){
-        log.trace("connection is opening...");
-        try{
-            this.connection = ConnectorDB.getConnection();
-            log.trace("connection was opened successfully");
-        }catch (Exception e){
-            log.error(e.getMessage());
-        }
-    }
-    public void closeConnection(){
-        log.trace("connection is closing...");
-        try{
-            connection.close();
-        } catch (Exception e){
-            log.error(e.getMessage());
-        }
-    }
-    public String getUserInfobyId(final long id) {
+    /*public String getUserInfobyId(final long id) {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(SQL_GET_USERINFO_BY_ID);
@@ -199,6 +146,6 @@ public class ContactManager {
         }
         return null;
     }
-
+*/
 
 }

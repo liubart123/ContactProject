@@ -8,5 +8,6 @@ public enum CriterionForSerach {
     website,
     email,
     job,
-    comment
+    comment,
+    id
 }

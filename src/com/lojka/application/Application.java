@@ -16,7 +16,7 @@ public class Application {
             System.out.println((e.getMessage()));
         }
         ContactManager manager = new ContactManager();
-        System.out.println(manager.getUserInfobyId(2));
+        System.out.println(manager.findInCollection("Ivan", CriterionForSerach.name));
         manager.closeConnection();
 
         /*//getting collection from file
