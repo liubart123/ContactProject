@@ -1,9 +1,17 @@
 package com.lojka.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lojka.contact.Address;
+import com.lojka.contact.Date;
 import com.lojka.contact.Person;
+import com.lojka.contact.TelephoneNumber;
+import com.lojka.contact.enums.FamilyStatus;
+import com.lojka.contact.enums.Gender;
+import com.lojka.contact.enums.TypeOfNumber;
 import com.lojka.manager.ContactManager;
 import com.lojka.manager.CriterionForSerach;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 public class Application {
@@ -24,6 +32,7 @@ public class Application {
         //printing collection
         manager.printAllContacts();
 
+        //testing of serialization
         //creating some contacts
         //ivan
         /*Person p = new Person("ivan",
@@ -50,9 +59,8 @@ public class Application {
                 "44",
                 "473-37-11",
                 TypeOfNumber.mobile));
-        manager.addContact(p);*/
         //barys
-        /*Person p = new Person("Barys",
+        Person p2 = new Person("Barys",
                 "Barysaw",
                 "Barysavich",
                 "belarusian",
@@ -71,21 +79,23 @@ public class Application {
                         "226622"),
                 new ArrayList<TelephoneNumber>()
         );
-        p.getTelephoneNumbers().add(new TelephoneNumber(
+        p2.getTelephoneNumbers().add(new TelephoneNumber(
                 "375",
                 "29",
                 "325-89-45",
                 TypeOfNumber.mobile));
-        p.getTelephoneNumbers().add(new TelephoneNumber(
+        p2.getTelephoneNumbers().add(new TelephoneNumber(
                 "375",
                 "12",
                 "395-16-94",
                 TypeOfNumber.home));
-        manager.addContact(p);*/
         //maksim
-        /*Person p = new Person("Maksim","Bogdan");
+        Person p3 = new Person("Maksim","Bogdan");
         manager.addContact(p);
-        manager.serializeCollection();*/
+        manager.addContact(p2);
+        manager.addContact(p3);
+        manager.serializeCollection();
+        manager.printAllContacts();*/
 
         //finding contacts
         manager.findInCollection("belarusian", CriterionForSerach.nationality, true);
@@ -93,13 +103,14 @@ public class Application {
         ArrayList<Person> foundPersons = manager.findInCollection("ivan", CriterionForSerach.name, false);
         if (foundPersons != null && foundPersons.size()!=0){
             Person person = foundPersons.get(0);
+            //removing person from collect
             manager.removeContact(person);
             manager.printAllContacts();
             //adding removed contact back
             manager.addContact(person);
             manager.printAllContacts();
         }
-
+        manager.serializeCollection();
     }
 
 }

@@ -16,6 +16,7 @@ public class TelephoneNumber implements Serializable {
         this.number = number;
         this.typeOfNumber = typeOfNumber;
     }
+    public TelephoneNumber(){}
 
     public String getCountryNumber() {
         return countryNumber;

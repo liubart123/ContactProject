@@ -31,6 +31,7 @@ public class Date implements Serializable {
         this.month = month;
         this.year = year;
     }
+    public Date(){}
 
     @Override
     public String toString(){

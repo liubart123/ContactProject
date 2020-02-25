@@ -1,5 +1,8 @@
 package com.lojka.manager;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lojka.contact.Person;
 
 import java.io.*;
@@ -19,9 +22,10 @@ import java.util.Iterator;
 import java.util.Optional;*/
 
 public class ContactManager {
-    private ArrayList<Person> contactCollection = new ArrayList<Person>();
+    protected ArrayList<Person> contactCollection = new ArrayList<Person>();
     private static final Logger log = Logger.getLogger(ContactManager.class);
 
+    public ContactManager(){}
     public boolean addContact(Person p){
         log.trace("adding new contact...");
         if (p!=null){
@@ -48,24 +52,31 @@ public class ContactManager {
     public void serializeCollection(){
         log.trace("serializating was started...");
         try{
-            try(ObjectOutputStream objOS = new ObjectOutputStream(new FileOutputStream("colection.txt"))){
-                objOS.writeObject(contactCollection);
+            try(FileWriter fw = new FileWriter("collection.txt",false)){
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+                String serializedObject  = mapper.writeValueAsString(this);
+                fw.write(serializedObject);
+                log.trace("serializating was finished");
             }
-        }catch (IOException e){
-            log.error("error with serialization");
+        }catch (Exception e){
+            log.error(e.getMessage());
         }
     }
 
     public void deserializeCollection(){
         log.trace("deserializating was started...");
         try{
-            try(ObjectInputStream objIS = new ObjectInputStream(new FileInputStream("colection.txt"))){
-                contactCollection = (ArrayList<Person>)objIS.readObject();
-            }
+            File f = new File("collection.txt");
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+            contactCollection = mapper.readValue(f,this.getClass()).contactCollection;
+            log.trace("deserializating was finished");
         }catch (Exception e){
-            log.error("error with deserialization");
+            log.error(e.getMessage());
         }
     }
+
 
     public void printAllContacts(){
         String res = "Contact book:\n";

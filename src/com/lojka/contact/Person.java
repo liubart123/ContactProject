@@ -23,6 +23,9 @@ public class Person implements Serializable {
     private Date birthDate;
     private Address address;
     private ArrayList<TelephoneNumber> telephoneNumbers;
+    public Person (){
+
+    }
 
     public Person(String name, String lastName){
         this.name=name;

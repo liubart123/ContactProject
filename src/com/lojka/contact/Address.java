@@ -19,6 +19,7 @@ public class Address implements Serializable {
         this.flat = flat;
         this.index = index;
     }
+    public Address(){}
 
     public String getCountry() {
         return country;
