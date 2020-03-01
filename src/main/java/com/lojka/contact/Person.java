@@ -24,6 +24,8 @@ public class Person implements Serializable {
     private Address address;
     private ArrayList<TelephoneNumber> telephoneNumbers;
 
+    private int personId;
+
     public Person(String name, String lastName){
         this.name=name;
         this.lastName=lastName;
@@ -124,6 +126,12 @@ public class Person implements Serializable {
     }
     public void setTelephoneNumbers(ArrayList<TelephoneNumber> telephoneNumbers) {
         this.telephoneNumbers = telephoneNumbers;
+    }
+    public int getPersonId() {
+        return personId;
+    }
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 
     @Override

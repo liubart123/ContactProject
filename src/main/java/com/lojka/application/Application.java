@@ -1,8 +1,13 @@
 package com.lojka.application;
 
+import com.lojka.contact.Address;
+import com.lojka.contact.Date;
 import com.lojka.contact.Person;
+import com.lojka.contact.TelephoneNumber;
+import com.lojka.contact.enums.FamilyStatus;
+import com.lojka.contact.enums.Gender;
+import com.lojka.contact.enums.TypeOfNumber;
 import com.lojka.manager.ContactManager;
-import com.lojka.manager.CriterionForSerach;
 
 import java.util.ArrayList;
 
@@ -16,17 +21,11 @@ public class Application {
             System.out.println((e.getMessage()));
         }
         ContactManager manager = new ContactManager();
-        System.out.println(manager.findInCollection("Ivan", CriterionForSerach.name));
-        manager.closeConnection();
-
-        /*//getting collection from file
-        manager.deserializeCollection();
-        //printing collection
-        manager.printAllContacts();*/
+        manager.clearDb();
 
         //creating some contacts
         //ivan
-        /*Person p = new Person("ivan",
+        Person p = new Person("ivan",
                 "ivanow",
                 "ivanavich",
                 "belarusian",
@@ -50,9 +49,16 @@ public class Application {
                 "44",
                 "473-37-11",
                 TypeOfNumber.mobile));
-        manager.addContact(p);*/
+        p.getTelephoneNumbers().add(new TelephoneNumber(
+                "375",
+                "44",
+                "474-37-11",
+                TypeOfNumber.home));
+        manager.addContact(p);
+
+
         //barys
-        /*Person p = new Person("Barys",
+        Person p2 = new Person("Barys",
                 "Barysaw",
                 "Barysavich",
                 "belarusian",
@@ -81,26 +87,30 @@ public class Application {
                 "12",
                 "395-16-94",
                 TypeOfNumber.home));
-        manager.addContact(p);*/
+        manager.addContact(p2);
         //maksim
-        /*Person p = new Person("Maksim","Bogdan");
-        manager.addContact(p);
-        manager.serializeCollection();*/
+        Person p3 = new Person("Maksim","Bogdan");
+        manager.addContact(p3);
+
+        //manager.deleteContact(p2.getPersonId());
+        //manager.printAllContacts();
+
+        p3.setNationality("uzbek");
+        p3.setAddress(new Address(
+                "uzbekistan",
+                "ajzejbardzhan",
+                "tbilisi",
+                "12",
+                "32",
+                "some index..."
+        ));
+        p3.setBirthDate(new Date((byte)01, (byte)01, (short)201));
+        p2.getAddress().setCountry("Russia");
+        p2.getBirthDate().setYear((short)1203);
+        manager.changeContact(p3);
 
 
-        /*//finding contacts
-        manager.findInCollection("belarusian", CriterionForSerach.nationality, true);
-        //finding and removing contact
-        ArrayList<Person> foundPersons = manager.findInCollection("ivan", CriterionForSerach.name, false);
-        if (foundPersons != null && foundPersons.size()!=0){
-            Person person = foundPersons.get(0);
-            manager.removeContact(person);
-            manager.printAllContacts();
-            //adding removed contact back
-            manager.addContact(person);
-            manager.printAllContacts();
-        }
-*/
+        manager.closeConnection();
     }
 
 }
