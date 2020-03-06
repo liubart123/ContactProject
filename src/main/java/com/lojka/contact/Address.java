@@ -60,7 +60,7 @@ public class Address implements Serializable {
 
     @Override
     public String toString(){
-        return String.format("country: %s. City: %s, %s str., %s, %s flat. Index: %s",getCountry(),getCity(),getStreet(),getHouse(),getFlat(),getIndex());
+        return String.format("%s. %s, %s str., %s, %s. Index: %s",getCountry(),getCity(),getStreet(),getHouse(),getFlat(),getIndex());
     }
 
     @Override

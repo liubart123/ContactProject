@@ -9,7 +9,19 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.lojka.contact.TelephoneNumber;
 import org.apache.log4j.Logger;
+
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+//import org.apache.poi;
+//import org.apache.poi.ooxml;
 
 //JDBC
 /*import com.lojka.connector.ConnectorDB;
@@ -174,35 +186,76 @@ public class ContactManager {
         return res;
     }
 
-    //TODO: code for JDBC. Will be added in next task
-/*    private Connection connection;
-    private final static String SQL_GET_USERINFO_BY_ID = "select * from users where id=? ";
-    public ContactManager() throws SQLException {
-        try{
-            this.connection = ConnectorDB.getConnection();
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
-    public void closeConnection() throws SQLException {
-        connection.close();
-    }
-    public String getUserInfobyId(final long id) {
-        PreparedStatement ps = null;
+    private final static String xlsFile = "contactBook.xlsx";
+    public void serializeCollectionExcel(){
         try {
-            ps = connection.prepareStatement(SQL_GET_USERINFO_BY_ID);
-            ps.setString(1, String.valueOf(id));
+            FileOutputStream out = new FileOutputStream(new File(xlsFile));
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("contacts");
+            int rowindex = 0;
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            XSSFRow row = sheet.createRow((short) rowindex);
 
-                return rs.getString("login");
+            //creating 1st row
+            sheet.setColumnWidth(0,3000);
+            row.createCell(0).setCellValue("name");
+            sheet.setColumnWidth(1,4000);
+            row.createCell(1).setCellValue("last name");
+            sheet.setColumnWidth(2,5000);
+            row.createCell(2).setCellValue("patronymic");
+            sheet.setColumnWidth(3,4000);
+            row.createCell(3).setCellValue("nationality");
+            sheet.setColumnWidth(4,5000);
+            row.createCell(4).setCellValue("website");
+            sheet.setColumnWidth(5,5000);
+            row.createCell(5).setCellValue("email");
+            sheet.setColumnWidth(6,4000);
+            row.createCell(6).setCellValue("job");
+            sheet.setColumnWidth(7,4000);
+            row.createCell(7).setCellValue("comment");
+            sheet.setColumnWidth(8,4000);
+            row.createCell(8).setCellValue("family status");
+            sheet.setColumnWidth(9,4000);
+            row.createCell(9).setCellValue("gender");
+            sheet.setColumnWidth(10,19000);
+            row.createCell(10).setCellValue("address");
+            sheet.setColumnWidth(11,10000);
+            row.createCell(11).setCellValue("telephones");
+
+            //writing contact info
+            for (Person p : contactCollection){
+                row = sheet.createRow((short) ++rowindex);
+                row.createCell(0).setCellValue(p.getName());
+                row.createCell(1).setCellValue(p.getLastName());
+                row.createCell(2).setCellValue(p.getPatronymic());
+                row.createCell(3).setCellValue(p.getNationality());
+                row.createCell(4).setCellValue(p.getWebsite());
+                row.createCell(5).setCellValue(p.getEmail());
+                row.createCell(6).setCellValue(p.getJob());
+                row.createCell(7).setCellValue(p.getComment());
+                if (p.getFamilyStatus() != null) row.createCell(8).setCellValue(p.getFamilyStatus().name());
+                if (p.getGender() != null) row.createCell(9).setCellValue(p.getGender().name());
+                if (p.getAddress() != null) row.createCell(10).setCellValue(p.getAddress().toString());
+                if (p.getTelephoneNumbers() != null) {
+                    String tels = "";
+                    for (TelephoneNumber tel : p.getTelephoneNumbers()){
+                        tels += tel.toString() + ", ";
+                    }
+                    tels = tels.substring(0,tels.length()-3);
+                    row.createCell(11).setCellValue(tels);
+                }
             }
-        } catch (SQLException e) {
+            workbook.write(out);
+            workbook.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
-    }*/
+    }
+    public void deserializeCollectionExcel(){
+
+    }
 
 
 }

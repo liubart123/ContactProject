@@ -17,14 +17,6 @@ import java.util.ArrayList;
 public class Application {
 
     public static void main(String[] args) {
-        /*TODO: code for JDBC
-        try{
-            ContactManager c = new ContactManager();
-            System.out.println(c.getUserInfobyId(1));
-        }catch (Exception e){
-            System.out.println((e.getMessage()));
-        }
-        */
         ContactManager manager = new ContactManager();
 
         //getting collection from file
@@ -111,6 +103,8 @@ public class Application {
             manager.printAllContacts();
         }
         manager.serializeCollection();
+
+        manager.serializeCollectionExcel();
     }
 
 }
